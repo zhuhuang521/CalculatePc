@@ -17,7 +17,7 @@ public class Calculate {
     int lastPointY = -1;
     private int finalLastX = -1,finalLastY = -1;
     int doubleTime = 0;
-    private final int floor = 1;
+    private final int floor = 4;
     private ArrayList<Integer> selectedData;
     private int calculateTimes = 0;
     public static long CTimes = 0;
@@ -78,6 +78,7 @@ public class Calculate {
             score = score + maxScore;
             start();
         }
+        System.out.println(df.format(new Date())+"最后得分 score   "+score);
     }
 
     private int[][] copyData(int[][] data){
