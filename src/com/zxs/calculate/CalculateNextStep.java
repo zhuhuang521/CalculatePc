@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * Created by zxs on 16/4/25.
  * 每一层的运算
  */
-public class CalculateFloor {
+public class CalculateNextStep {
     private int data[][];
     private int score;
     private int floor;
@@ -19,7 +19,7 @@ public class CalculateFloor {
     private ArrayList<Integer> selectedData;
     private int beginClickPointsNum;
 
-    public CalculateFloor(int data[][], int score, int floor, int lastPoint[], int doubleTime, ArrayList<int[]> clickPoints) {
+    public CalculateNextStep(int data[][], int score, int floor, int lastPoint[], int doubleTime, ArrayList<int[]> clickPoints) {
         this.data = data;
         this.score = score;
         this.floor = floor;
@@ -37,53 +37,15 @@ public class CalculateFloor {
      * 返回从当前层数往下到最后一层中计算的最大分数
      */
     public int calculate() {
-        int maxData = score;
-        for (int i = 0; i < 16; i++) {
-            for (int j = 0; j < 25; j++) {
-                if (data[i][j] == 0) {
-                    doubleScore = beginDoubleScore;
-                    int floorNum = score;
-                    int num = getScore(i, j);
-                    Calculate.CTimes++;
-                    //System.out.println("运算次数"+Calculate.CTimes);
-                    if (num > 0) {
-                        //如果大于0，表示这次计算有数据，把数据传递进去进行，进行下一层运算
-                        if (lastPoint[0] == i && lastPoint[1] == j) {
-                            doubleScore = doubleScore + 1;
-                        } else {
-                            lastPoint[0] = -1;
-                            lastPoint[1] = -1;
-                            doubleScore = 0;
-                        }
-                        floorNum = floorNum + num;
-//                        if(floor == 1 && !hasNexPoint(pointList)){
-//                            return num;
-//                        }
-
-                        int clickP[] = new int[]{i, j};
-                        ArrayList<int[]> pointList = new ArrayList<int[]>();
-                        pointList.add(clickP);
-                        getScore(i, j);
-                        int nextData[][] = clearPoint(i, j, copyData(data));
-                        if (doubleClickEnable(i, j, nextData)) {
-                            CalculateFloor calculateFloor = new CalculateFloor(nextData, floorNum, 0, lastPoint, doubleScore, pointList);
-                            floorNum = calculateFloor.calculate();
-                        }
-                        if (floorNum > maxData) {
-                            maxData = floorNum;
-                            if (clickPoints.size() > beginClickPointsNum) {
-                                for (int clear = clickPoints.size() - 1; clear >= beginClickPointsNum; clear--) {
-                                    clickPoints.remove(clear);
-                                }
-                            }
-                            clickPoints.addAll(pointList);
-                        }
-                    }
-
-                }
-            }
+        int num = getScore(lastPoint[0], lastPoint[1])+score;
+        clickPoints.add(lastPoint);
+        int nextData[][] = clearPoint(lastPoint[0], lastPoint[1], copyData(data));
+        if(doubleClickEnable(lastPoint[0],lastPoint[1],nextData)){
+            doubleScore = doubleScore+1;
+            CalculateNextStep calculateNextStep = new CalculateNextStep(nextData,num,0,lastPoint,doubleScore,clickPoints);
+            num = calculateNextStep.calculate();
         }
-        return maxData;
+        return num;
     }
 
     /***

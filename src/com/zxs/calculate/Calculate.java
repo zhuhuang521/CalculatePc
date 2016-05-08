@@ -56,8 +56,11 @@ public class Calculate {
                         clickPoints.add(clickP);
                         int lastF = floorTime-1;
                         int nextData[][] = clearPoint(i,j,copyData(data));
-                        CalculateFloor calculateFloor = new CalculateFloor(nextData,num,lastF,clickP,doubleTime,clickPoints);
-                        num = calculateFloor.calculate();
+                        if(doubleClickEnable(i,j,nextData)){
+                            CalculateNextStep calculateFloor = new CalculateNextStep(nextData,num,lastF,clickP,doubleTime,clickPoints);
+                            num = calculateFloor.calculate();
+                        }
+
                     }
                    if(num >= maxScore || (num == 0 && maxScore ==0)){
                        maxScore = num;
@@ -78,6 +81,7 @@ public class Calculate {
             score = score + maxScore;
             start();
         }
+        System.out.println("最后得分 score   "+score);
     }
 
     private int[][] copyData(int[][] data){
@@ -111,7 +115,63 @@ public class Calculate {
         }
         return false;
     }
+    /***
+     * 再次点击看能不能消除
+     * */
+    private boolean doubleClickEnable(int y,int x,int[][] data){
+        int num = 0;
+        int point[] = new int[4];
+        //计算四个方向的数据
+        //left
+        for(int i = x-1;i>=0;i--){
+            if(data[y][i] != 0){
+                point[0] = data[y][i];
+                break;
+            }
+        }
+        //top
+        for(int i = y-1;i>=0;i--){
+            if(data[i][x] != 0){
+                point[1] = data[i][x];
+                break;
+            }
+        }
+        //right
+        for(int i = x+1;i<25;i++){
+            if(data[y][i] != 0){
+                point[2] = data[y][i];
+                break;
+            }
+        }
+        //bottom
+        for(int i = y+1;i<16;i++){
+            if(data[i][x] != 0){
+                point[3] = data[i][x];
+                break;
+            }
+        }
+        //计算四个数据的数值
+        int clearData = -1;
+        for(int i=0;i<4;i++){
+            for(int j=i+1;j<4;j++){
+                if(point[i] == point[j] && point[i] != 0){
+                    if(clearData == -1 || clearData == point[i]){
+                        num = (num==0?2:2*num);
+                        point[j] = 0;
 
+                    }else{
+                        num = 8;
+                    }
+                    clearData = point[i];
+
+                }
+            }
+        }
+        if(num > 0){
+            return true;
+        }
+        return false;
+    }
     /**
      * 获取点击某个点的数据
      * */
