@@ -22,7 +22,7 @@ public class Calculate {
     private int finalLastX = -1,finalLastY = -1;
     int doubleScore = 0;
     int finalDoubleScore = 0;
-    private final int floor = 4;
+    private final int floor = 3;
     private ArrayList<Integer> selectedData;
     private int calculateTimes = 0;
     public static long CTimes = 0;
@@ -66,7 +66,7 @@ public class Calculate {
         ArrayList<int[]> clearPoint = new ArrayList<int[]>();
         lastPointX = finalLastX;
         lastPointY = finalLastY;
-        System.out.println(df.format(new Date())+"第"+calculateTimes+"次运算开始,得分 score   "+score);
+        //System.out.println(df.format(new Date())+"第"+calculateTimes+"次运算开始,得分 score   "+score);
         for(int i=0;i<16;i++){
             for(int j=0;j<25;j++){
                 if(data[i][j] == 0){
@@ -102,7 +102,7 @@ public class Calculate {
             }
         }
         calculateTimes++;
-        System.out.println(df.format(new Date())+"第"+calculateTimes+"次运算结束,得分 score   "+score);
+        System.out.println(df.format(new Date())+"第"+calculateTimes+"次运算结束,得分 score   "+maxScore+" 总分 "+score+"  "+finalLastX+","+finalLastY);
         if(maxScore != 0 || hasNexPoint(clearPoint)){
             int clearNum = clearPoint.size();
             for(int i =0;i<clearNum;i++){
@@ -120,6 +120,17 @@ public class Calculate {
         System.out.println(df.format(new Date())+"最后得分 score   "+score);
     }
 
+    private void sysOut(){
+        System.out.println("   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 ");
+        System.out.println();
+        for(int i=0;i<16;i++){
+            System.out.print(""+(i%10)+" ");
+            for(int j=0;j<25;j++){
+                System.out.print(" "+data[i][j]);
+            }
+            System.out.println();
+        }
+    }
     private int[][] copyData(int[][] data){
         int copyData[][] = new int[16][25];
         for(int i =0;i<16;i++){
