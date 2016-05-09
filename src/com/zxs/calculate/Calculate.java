@@ -16,8 +16,9 @@ public class Calculate {
     int lastPointX =-1;
     int lastPointY = -1;
     private int finalLastX = -1,finalLastY = -1;
-    int doubleTime = 0;
-    private final int floor = 4;
+    int doubleScore = 0;
+    int finalDoubleScore = 0;
+    private final int floor = 1;
     private ArrayList<Integer> selectedData;
     private int calculateTimes = 0;
     public static long CTimes = 0;
@@ -25,6 +26,22 @@ public class Calculate {
         this.data = data;
         this.score = score;
         selectedData = new ArrayList<Integer>();
+    }
+
+    public void begin(){
+        for(int i=0;i<16;i++){
+            for(int j=0;j<25;j++){
+                System.out.print(""+data[i][j]);
+            }
+            System.out.println();
+        }
+        start();
+        for(int i=0;i<16;i++){
+            for(int j=0;j<25;j++){
+                System.out.print(""+data[i][j]);
+            }
+            System.out.println();
+        }
     }
     public void start(){
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -36,8 +53,9 @@ public class Calculate {
         for(int i=0;i<16;i++){
             for(int j=0;j<25;j++){
                 if(data[i][j] == 0){
+                    doubleScore = finalDoubleScore;
                     int floorTime = floor;
-                    int num = getScore(i,j);
+                    int num = getScore(i,j,false);
                     ArrayList<int[]> clickPoints = new ArrayList<int[]>();
                     CTimes++;
                     //System.out.println("运算次数"+CTimes);
@@ -45,18 +63,18 @@ public class Calculate {
                         if(lastPointX == -1){
                             lastPointX = i;
                             lastPointY = j;
-                            doubleTime = 2;
+                            doubleScore = 2;
                         }else if(lastPointX != i || lastPointY != j){
                             lastPointX = -1;
                             lastPointY = -1;
-                            doubleTime = 0;
+                            doubleScore = 0;
                         }
 
                         int clickP[] = new int[]{i,j};
                         clickPoints.add(clickP);
                         int lastF = floorTime-1;
                         int nextData[][] = clearPoint(i,j,copyData(data));
-                        CalculateFloor calculateFloor = new CalculateFloor(nextData,num,lastF,clickP,doubleTime,clickPoints);
+                        CalculateFloor calculateFloor = new CalculateFloor(nextData,num,lastF,clickP,doubleScore,clickPoints);
                         num = calculateFloor.calculate();
                     }
                    if(num >= maxScore || (num == 0 && maxScore ==0)){
@@ -71,8 +89,7 @@ public class Calculate {
         if(maxScore != 0 || hasNexPoint(clearPoint)){
             int clearNum = clearPoint.size();
             for(int i =0;i<clearNum;i++){
-
-                getScore(clearPoint.get(i)[0],clearPoint.get(i)[1]);
+                getScore(clearPoint.get(i)[0],clearPoint.get(i)[1],true);
                 data = clearPoint(clearPoint.get(i)[0],clearPoint.get(i)[1],data);
             }
             score = score + maxScore;
@@ -116,7 +133,7 @@ public class Calculate {
     /**
      * 获取点击某个点的数据
      * */
-    private int getScore(int y,int x){
+    private int getScore(int y,int x,boolean calculate){
         int num = 0;
         int point[] = new int[4];
         //计算四个方向的数据
@@ -168,9 +185,24 @@ public class Calculate {
                 }
             }
         }
-        if(num>0 && lastPointX == y && lastPointY == x && doubleTime > 0){
-            num = num +doubleTime;
-            doubleTime = doubleTime + 1;
+        if(num>0 && lastPointX == y && lastPointY == x && doubleScore >= 0){
+            if(doubleScore == 0){
+                num = num +2;
+            }else{
+                num = num +doubleScore;
+            }
+            if(calculate){
+                if(finalDoubleScore == 0){
+                    finalDoubleScore = 2;
+                }else{
+                    finalDoubleScore  = finalDoubleScore +1;
+                }
+            }
+            doubleScore = doubleScore + 1;
+        }
+        if(calculate){
+            finalLastX = y;
+            finalLastY = x;
         }
         return num;
     }

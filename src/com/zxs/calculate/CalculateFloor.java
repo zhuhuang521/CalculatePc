@@ -51,7 +51,12 @@ public class CalculateFloor {
                     if(num > 0){
                         //如果大于0，表示这次计算有数据，把数据传递进去进行，进行下一层运算
                         if(lastPoint[0] == i && lastPoint[1] == j){
-                            doubleScore = doubleScore + 1;
+                            if(doubleScore == 0){
+                                doubleScore = 2;
+                            }else{
+                                doubleScore = doubleScore + 1;
+                            }
+
                         }else{
                             lastPoint[0] = -1;
                             lastPoint[1] = -1;
@@ -177,8 +182,13 @@ public class CalculateFloor {
                 }
             }
         }
-        if(num>0 && lastPoint[1] == y && lastPoint[0] == x && doubleScore > 0){
-            num = num +doubleScore;
+        if(num>0 && lastPoint[1] == y && lastPoint[0] == x && doubleScore >= 0){
+            if(doubleScore == 0){
+                num = num +doubleScore+2;
+            }else{
+                num = num +doubleScore;
+            }
+
         }
         return num;
     }

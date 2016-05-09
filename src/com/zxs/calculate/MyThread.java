@@ -48,8 +48,6 @@ public class MyThread extends Thread{
             }
         }
         Calculate calculate = new Calculate(data,0);
-        Calendar calendar = Calendar.getInstance();
-        calculate.start();
-        Calendar endCalendar = Calendar.getInstance();
+        calculate.begin();
     }
 }
