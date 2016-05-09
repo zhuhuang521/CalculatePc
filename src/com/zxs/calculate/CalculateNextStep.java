@@ -204,57 +204,77 @@ public class CalculateNextStep {
      * 清除点击某个点后的数据
      */
     private int[][] clearPoint(int y, int x, int[][] data) {
-        int num = selectedData.size();
-        for (int k = 0; k < selectedData.size(); k++) {
+        boolean left = false,top=false,right=false,bottom=false;
+        for(int k = 0;k<selectedData.size();k++){
             int select = selectedData.get(k);
             //left
-            for (int i = x - 1; i >= 0; i--) {
-                if (data[y][i] == 0) {
-                    continue;
-                }
-                if (data[y][i] != 0 && data[y][i] == select) {
-                    data[y][i] = 0;
-                    break;
-                } else {
-                    break;
+            if(!left){
+                for(int i = x-1;i>=0;i--){
+                    if(data[y][i] == 0){
+                        continue;
+                    }
+                    //这里有问题
+                    if(data[y][i] != 0){
+                        if(data[y][i] == select){
+                            data[y][i]=0;
+                            left = true;
+                        }
+                        break;
+                    }
                 }
             }
+
             //top
-            for (int i = y - 1; i >= 0; i--) {
-                if (data[i][x] == 0) {
-                    continue;
-                }
-                if (data[i][x] != 0 && data[i][x] == select) {
-                    data[i][x] = 0;
-                    break;
-                } else {
-                    break;
+            if(!top){
+                for(int i = y-1;i>=0;i--){
+                    if(data[i][x] == 0){
+                        continue;
+                    }
+                    if(data[i][x] != 0){
+                        if(data[i][x] == select){
+                            data[i][x]=0;
+                            top = true;
+                        }
+
+                        break;
+                    }
                 }
             }
+
             //right
-            for (int i = x + 1; i < 25; i++) {
-                if (data[y][i] == 0) {
-                    continue;
-                }
-                if (data[y][i] != 0 && data[y][i] == select) {
-                    data[y][i] = 0;
-                    break;
-                } else {
-                    break;
+            if(!right){
+                for(int i = x+1;i<25;i++){
+                    if(data[y][i] == 0) {
+                        continue;
+                    }
+                    if(data[y][i] != 0){
+
+                        if(data[y][i] == select){
+                            right = true;
+                            data[y][i]=0;
+                        }
+                        break;
+                    }
                 }
             }
+
             //bottom
-            for (int i = y + 1; i < 16; i++) {
-                if (data[i][x] == 0) {
-                    continue;
-                }
-                if (data[i][x] != 0 && data[i][x] == select) {
-                    data[i][x] = 0;
-                    break;
-                } else {
-                    break;
+            if(!bottom){
+                for(int i = y+1;i<16;i++){
+                    if(data[i][x] == 0){
+                        continue;
+                    }
+                    if(data[i][x] != 0 ){
+                        if(data[i][x] == select){
+                            data[i][x]=0;
+                            bottom = true;
+                        }
+
+                        break;
+                    }
                 }
             }
+
         }
 
         return data;

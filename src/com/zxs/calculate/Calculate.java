@@ -17,17 +17,14 @@ public class Calculate {
     private int[][] data;
     int score;
     public static long calculateNum = 0;
-    int lastPointX =-1;
-    int lastPointY = -1;
-    private int finalLastX = -1,finalLastY = -1;
     int doubleScore = 0;
-    int finalDoubleScore = 0;
     private final int floor = 3;
     private ArrayList<Integer> selectedData;
     private int calculateTimes = 0;
     public static long CTimes = 0;
     private File outFile;
     private FileWriter fileWriter;
+    private int lasX,lasY;
     public Calculate(int [][] data,int score){
         this.data = data;
         this.score = score;
@@ -60,39 +57,29 @@ public class Calculate {
             System.out.println();
         }
     }
+    //新的算法,如果有深度,一直遍历下去
     public void start(){
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         int maxScore = 0;
         ArrayList<int[]> clearPoint = new ArrayList<int[]>();
-        lastPointX = finalLastX;
-        lastPointY = finalLastY;
-        //System.out.println(df.format(new Date())+"第"+calculateTimes+"次运算开始,得分 score   "+score);
+        //如果没有深度,并且有相同的数据,对相同数据进行深度N层次,看运行结果
         for(int i=0;i<16;i++){
             for(int j=0;j<25;j++){
                 if(data[i][j] == 0){
-                    doubleScore = finalDoubleScore;
                     int floorTime = floor;
                     int num = getScore(i,j,false);
                     ArrayList<int[]> clickPoints = new ArrayList<int[]>();
                     CTimes++;
                     //System.out.println("运算次数"+CTimes);
                     if(num > 0){
-                        if(lastPointX == -1){
-                            lastPointX = i;
-                            lastPointY = j;
-                            doubleScore = 2;
-                        }else if(lastPointX != i || lastPointY != j){
-                            lastPointX = -1;
-                            lastPointY = -1;
-                            doubleScore = 0;
-                        }
-
                         int clickP[] = new int[]{i,j};
                         clickPoints.add(clickP);
-                        int lastF = floorTime-1;
                         int nextData[][] = clearPoint(i,j,copyData(data));
-                        CalculateFloor calculateFloor = new CalculateFloor(nextData,num,lastF,clickP,doubleScore,clickPoints);
-                        num = calculateFloor.calculate();
+                        if(doubleClickEnable(i,j,nextData)){
+                            //点击再次点击可以double
+                            CalculateNextStep calculateNextStep = new CalculateNextStep(nextData,num,0,clickP,2,clickPoints);
+                            num = calculateNextStep.calculate();
+                        }
                     }
                    if(num >= maxScore || (num == 0 && maxScore ==0)){
                        maxScore = num;
@@ -102,7 +89,6 @@ public class Calculate {
             }
         }
         calculateTimes++;
-        System.out.println(df.format(new Date())+"第"+calculateTimes+"次运算结束,得分 score   "+maxScore+" 总分 "+score+"  "+finalLastX+","+finalLastY);
         if(maxScore != 0 || hasNexPoint(clearPoint)){
             int clearNum = clearPoint.size();
             for(int i =0;i<clearNum;i++){
@@ -139,6 +125,64 @@ public class Calculate {
             }
         }
         return copyData;
+    }
+
+    /***
+     * 再次点击看能不能消除
+     */
+    private boolean doubleClickEnable(int y, int x, int[][] data) {
+        int num = 0;
+        int point[] = new int[4];
+        //计算四个方向的数据
+        //left
+        for (int i = x - 1; i >= 0; i--) {
+            if (data[y][i] != 0) {
+                point[0] = data[y][i];
+                break;
+            }
+        }
+        //top
+        for (int i = y - 1; i >= 0; i--) {
+            if (data[i][x] != 0) {
+                point[1] = data[i][x];
+                break;
+            }
+        }
+        //right
+        for (int i = x + 1; i < 25; i++) {
+            if (data[y][i] != 0) {
+                point[2] = data[y][i];
+                break;
+            }
+        }
+        //bottom
+        for (int i = y + 1; i < 16; i++) {
+            if (data[i][x] != 0) {
+                point[3] = data[i][x];
+                break;
+            }
+        }
+        //计算四个数据的数值
+        int clearData = -1;
+        for (int i = 0; i < 4; i++) {
+            for (int j = i + 1; j < 4; j++) {
+                if (point[i] == point[j] && point[i] != 0) {
+                    if (clearData == -1 || clearData == point[i]) {
+                        num = (num == 0 ? 2 : 2 * num);
+                        point[j] = 0;
+
+                    } else {
+                        num = 8;
+                    }
+                    clearData = point[i];
+
+                }
+            }
+        }
+        if (num > 0) {
+            return true;
+        }
+        return false;
     }
     /**
      * 是否还有下一个可点击的点，从左到右，从上倒下
@@ -218,24 +262,12 @@ public class Calculate {
                 }
             }
         }
-        if(num>0 && lastPointX == y && lastPointY == x && doubleScore >= 0){
+        if(num>0 && lasX == y && lasY == x && doubleScore >= 0){
             if(doubleScore == 0){
                 num = num +2;
             }else{
-                num = num +doubleScore;
+                num = num +doubleScore+1;
             }
-            if(calculate){
-                if(finalDoubleScore == 0){
-                    finalDoubleScore = 2;
-                }else{
-                    finalDoubleScore  = finalDoubleScore +1;
-                }
-            }
-            doubleScore = doubleScore + 1;
-        }
-        if(calculate){
-            finalLastX = y;
-            finalLastY = x;
         }
         return num;
     }
@@ -293,7 +325,6 @@ public class Calculate {
                             right = true;
                             data[y][i]=0;
                         }
-
                         break;
                     }
                 }
@@ -306,7 +337,6 @@ public class Calculate {
                         continue;
                     }
                     if(data[i][x] != 0 ){
-
                         if(data[i][x] == select){
                             data[i][x]=0;
                             bottom = true;
