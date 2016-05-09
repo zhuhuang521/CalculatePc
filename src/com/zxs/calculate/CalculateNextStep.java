@@ -37,14 +37,50 @@ public class CalculateNextStep {
      * 返回从当前层数往下到最后一层中计算的最大分数
      */
     public int calculate() {
-        int num = getScore(lastPoint[0], lastPoint[1])+score;
+        int maxPi = -1;
+        int maxPj = -1;
+        int maxScore = 0;
+
+        int stepScore = getScore(lastPoint[0], lastPoint[1]);
+        int num = stepScore+score;
         clickPoints.add(lastPoint);
+        int[][] enableData = copyData(data);
         int nextData[][] = clearPoint(lastPoint[0], lastPoint[1], copyData(data));
         if(doubleClickEnable(lastPoint[0],lastPoint[1],nextData)){
             doubleScore = doubleScore+1;
             CalculateNextStep calculateNextStep = new CalculateNextStep(nextData,num,0,lastPoint,doubleScore,clickPoints);
             num = calculateNextStep.calculate();
+        }else{
+            //算当前最大值
+            for(int i=0;i<16;i++){
+                for(int j=0;j<25;j++){
+                    int max = getScore(i,j);
+                    if(max > maxScore){
+                        maxScore = max;
+                        maxPi = i;
+                        maxPj = j;
+                    }
+                }
+            }
+            //这个运算可有可无
+            if(maxPi!=-1&&(maxScore+score) > num && maxScore != 0){
+                System.out.println("开始分数  "+score+"  比连击还多的数据 "+(maxScore+score)+"  默认得分 "+stepScore+" 连击后得分 "+num +" 附加"+beginDoubleScore+" i j "+lastPoint[0]+","+lastPoint[1]);
+                int p[] = new int[2];
+                p[0] = maxPi;
+                p[1] = maxPj;
+                clickPoints.remove(clickPoints.size()-2);
+                clickPoints.add(p);
+                num = maxScore+score;
+                getScore(maxPi,maxPj);
+                int nextData1[][] = clearPoint(maxPi, maxPj, enableData);
+                if(doubleClickEnable(maxPi,maxPj,nextData1)){
+                    //CalculateNextStep calculateNextStep = new CalculateNextStep(nextData1,num,0,p,2,clickPoints);
+                    //num = calculateNextStep.calculate();
+                }
+            }
         }
+
+
         return num;
     }
 

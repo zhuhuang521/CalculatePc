@@ -63,6 +63,8 @@ public class Calculate {
         int maxScore = 0;
         ArrayList<int[]> clearPoint = new ArrayList<int[]>();
         //如果没有深度,并且有相同的数据,对相同数据进行深度N层次,看运行结果
+        boolean hasDeep = false;
+        ArrayList<TemPoint> temPointsList = new ArrayList<TemPoint>();
         for(int i=0;i<16;i++){
             for(int j=0;j<25;j++){
                 if(data[i][j] == 0){
@@ -77,16 +79,27 @@ public class Calculate {
                         int nextData[][] = clearPoint(i,j,copyData(data));
                         if(doubleClickEnable(i,j,nextData)){
                             //点击再次点击可以double
+                            hasDeep = true;
                             CalculateNextStep calculateNextStep = new CalculateNextStep(nextData,num,0,clickP,2,clickPoints);
                             num = calculateNextStep.calculate();
                         }
                     }
                    if(num >= maxScore || (num == 0 && maxScore ==0)){
+                       TemPoint temPoint = new TemPoint(i,j,num);
+                       if(num > maxScore){
+                           temPointsList.clear();
+                           temPointsList.add(temPoint);
+                       }else{
+                           temPointsList.add(temPoint);
+                       }
                        maxScore = num;
                        clearPoint = clickPoints;
                    }
                 }
             }
+        }
+        if(!hasDeep && temPointsList.size() >=2){
+            //不存在深度,且相同最大值数量大于2,进行进行深度优先
         }
         calculateTimes++;
         if(maxScore != 0 || hasNexPoint(clearPoint)){
