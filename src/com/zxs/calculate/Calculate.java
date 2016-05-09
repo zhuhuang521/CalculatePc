@@ -1,5 +1,9 @@
 package com.zxs.calculate;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.rmi.server.ExportException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,10 +22,12 @@ public class Calculate {
     private int finalLastX = -1,finalLastY = -1;
     int doubleScore = 0;
     int finalDoubleScore = 0;
-    private final int floor = 1;
+    private final int floor = 4;
     private ArrayList<Integer> selectedData;
     private int calculateTimes = 0;
     public static long CTimes = 0;
+    private File outFile;
+    private FileWriter fileWriter;
     public Calculate(int [][] data,int score){
         this.data = data;
         this.score = score;
@@ -35,7 +41,18 @@ public class Calculate {
             }
             System.out.println();
         }
+        outFile = new File("data/out.txt");
+        outFile.delete();
+        if(!outFile.exists()){
+            try {
+                outFile.createNewFile();
+                fileWriter = new FileWriter(outFile.getPath());
+            }catch (Exception e){}
+        }
         start();
+        try {
+            fileWriter.close();
+        }catch (Exception e){}
         for(int i=0;i<16;i++){
             for(int j=0;j<25;j++){
                 System.out.print(""+data[i][j]);
@@ -91,6 +108,11 @@ public class Calculate {
             for(int i =0;i<clearNum;i++){
                 getScore(clearPoint.get(i)[0],clearPoint.get(i)[1],true);
                 data = clearPoint(clearPoint.get(i)[0],clearPoint.get(i)[1],data);
+                try {
+                    fileWriter.write(clearPoint.get(i)[0] + "," + clearPoint.get(i)[1]+"\r\n");
+                }catch (Exception e){
+
+                }
             }
             score = score + maxScore;
             start();
@@ -211,56 +233,79 @@ public class Calculate {
      * 清除点击某个点后的数据
      */
     private int[][] clearPoint(int y,int x,int[][] data){
+        boolean left = false,top=false,right=false,bottom=false;
         for(int k = 0;k<selectedData.size();k++){
             int select = selectedData.get(k);
             //left
-            for(int i = x-1;i>=0;i--){
-                if(data[y][i] == 0){
-                    continue;
-                }
-                if(data[y][i] != 0 && data[y][i] == select){
-                    data[y][i]=0;
-                    break;
-                }else{
-                    break;
+            if(!left){
+                for(int i = x-1;i>=0;i--){
+                    if(data[y][i] == 0){
+                        continue;
+                    }
+                    //这里有问题
+                    if(data[y][i] != 0){
+                        if(data[y][i] == select){
+                            data[y][i]=0;
+                            left = true;
+                        }
+                        break;
+                    }
                 }
             }
+
             //top
-            for(int i = y-1;i>=0;i--){
-                if(data[i][x] == 0){
-                    continue;
-                }
-                if(data[i][x] != 0 && data[i][x] == select){
-                    data[i][x]=0;
-                    break;
-                }else{
-                    break;
+            if(!top){
+                for(int i = y-1;i>=0;i--){
+                    if(data[i][x] == 0){
+                        continue;
+                    }
+                    if(data[i][x] != 0){
+                        if(data[i][x] == select){
+                            data[i][x]=0;
+                            top = true;
+                        }
+
+                        break;
+                    }
                 }
             }
+
             //right
-            for(int i = x+1;i<25;i++){
-                if(data[y][i] == 0) {
-                    continue;
-                }
-                if(data[y][i] != 0 && data[y][i] == select){
-                    data[y][i]=0;
-                    break;
-                }else{
-                    break;
+            if(!right){
+                for(int i = x+1;i<25;i++){
+                    if(data[y][i] == 0) {
+                        continue;
+                    }
+                    if(data[y][i] != 0){
+
+                        if(data[y][i] == select){
+                            right = true;
+                            data[y][i]=0;
+                        }
+
+                        break;
+                    }
                 }
             }
+
             //bottom
-            for(int i = y+1;i<16;i++){
-                if(data[i][x] == 0){
-                    continue;
-                }
-                if(data[i][x] != 0 && data[i][x] == select){
-                    data[i][x]=0;
-                    break;
-                }else{
-                    break;
+            if(!bottom){
+                for(int i = y+1;i<16;i++){
+                    if(data[i][x] == 0){
+                        continue;
+                    }
+                    if(data[i][x] != 0 ){
+
+                        if(data[i][x] == select){
+                            data[i][x]=0;
+                            bottom = true;
+                        }
+
+                        break;
+                    }
                 }
             }
+
         }
 
         return data;
