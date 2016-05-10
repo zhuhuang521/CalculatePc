@@ -20,7 +20,7 @@ public class Calculate {
     int doubleScore = 0;
     private final int floor = 3;
     private ArrayList<Integer> selectedData;
-    private int calculateTimes = 0;
+    public static int calculateTimes = 1;
     public static long CTimes = 0;
     private File outFile;
     private FileWriter fileWriter;
@@ -47,6 +47,8 @@ public class Calculate {
             }catch (Exception e){}
         }
         start();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        System.out.println(df.format(new Date())+"最后得分 score   "+score);
         try {
             fileWriter.close();
         }catch (Exception e){}
@@ -59,7 +61,7 @@ public class Calculate {
     }
     //新的算法,如果有深度,一直遍历下去
     public void start(){
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
         int maxScore = 0;
         ArrayList<int[]> clearPoint = new ArrayList<int[]>();
         //如果没有深度,并且有相同的数据,对相同数据进行深度N层次,看运行结果
@@ -74,6 +76,8 @@ public class Calculate {
                     CTimes++;
                     //System.out.println("运算次数"+CTimes);
                     if(num > 0){
+                        System.out.println("第 "+calculateTimes+"  运算 得分"+num);
+                        calculateTimes++;
                         int clickP[] = new int[]{i,j};
                         clickPoints.add(clickP);
                         int nextData[][] = clearPoint(i,j,copyData(data));
@@ -100,6 +104,7 @@ public class Calculate {
         }
         if(!hasDeep && temPointsList.size() >=2){
             //不存在深度,且相同最大值数量大于2,进行进行深度优先
+
         }
         calculateTimes++;
         if(maxScore != 0 || hasNexPoint(clearPoint)){
@@ -113,10 +118,11 @@ public class Calculate {
 
                 }
             }
+            //System.out.println("运算补数  "+clearNum +"   得分 "+maxScore);
             score = score + maxScore;
             start();
         }
-        System.out.println(df.format(new Date())+"最后得分 score   "+score);
+
     }
 
     private void sysOut(){

@@ -42,7 +42,9 @@ public class CalculateNextStep {
         int maxScore = 0;
 
         int stepScore = getScore(lastPoint[0], lastPoint[1]);
-        int num = stepScore+score;
+        int num = stepScore+score+doubleScore;
+        System.out.println("第 "+Calculate.calculateTimes+"  运算 得分"+(stepScore+doubleScore));
+        Calculate.calculateTimes++;
         clickPoints.add(lastPoint);
         int[][] enableData = copyData(data);
         int nextData[][] = clearPoint(lastPoint[0], lastPoint[1], copyData(data));
@@ -63,21 +65,21 @@ public class CalculateNextStep {
                 }
             }
             //这个运算可有可无
-            if(maxPi!=-1&&(maxScore+score) > num && maxScore != 0){
-                System.out.println("开始分数  "+score+"  比连击还多的数据 "+(maxScore+score)+"  默认得分 "+stepScore+" 连击后得分 "+num +" 附加"+beginDoubleScore+" i j "+lastPoint[0]+","+lastPoint[1]);
-                int p[] = new int[2];
-                p[0] = maxPi;
-                p[1] = maxPj;
-                clickPoints.remove(clickPoints.size()-2);
-                clickPoints.add(p);
-                num = maxScore+score;
-                getScore(maxPi,maxPj);
-                int nextData1[][] = clearPoint(maxPi, maxPj, enableData);
-                if(doubleClickEnable(maxPi,maxPj,nextData1)){
-                    //CalculateNextStep calculateNextStep = new CalculateNextStep(nextData1,num,0,p,2,clickPoints);
-                    //num = calculateNextStep.calculate();
-                }
-            }
+//            if(maxPi!=-1&&(maxScore+score) > num && maxScore != 0){
+//                System.out.println("开始分数  "+score+"  比连击还多的数据 "+(maxScore+score)+"  默认得分 "+stepScore+" 连击后得分 "+num +" 附加"+beginDoubleScore+" i j "+lastPoint[0]+","+lastPoint[1]);
+//                int p[] = new int[2];
+//                p[0] = maxPi;
+//                p[1] = maxPj;
+//                clickPoints.remove(clickPoints.size()-2);
+//                clickPoints.add(p);
+//                num = maxScore+score;
+//                getScore(maxPi,maxPj);
+//                int nextData1[][] = clearPoint(maxPi, maxPj, enableData);
+//                if(doubleClickEnable(maxPi,maxPj,nextData1)){
+//                    CalculateNextStep calculateNextStep = new CalculateNextStep(nextData1,num,0,p,2,clickPoints);
+//                    num = calculateNextStep.calculate();
+//                }
+//            }
         }
 
 
