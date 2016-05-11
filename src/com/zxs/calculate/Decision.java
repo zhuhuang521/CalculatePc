@@ -49,7 +49,7 @@ public class Decision {
             for(int j=0;j<25;j++){
                 //decisionTime++;
                 //System.out.println("deep times "+decisionTime);
-                if(data[i][j] == 0){
+                if(data[i][j] != 0){
                     continue;
                 }
                 int num = getScore(i,j,copyData(data));
@@ -126,7 +126,6 @@ public class Decision {
         }
         if (!hasDeep && temPointsList.size() >= 2) {
             decision = decision*temPointsList.size();
-            System.out.println("需要比较不同数据 "+temPointsList.get(0).score+"  "+temPointsList.size());
             //从这里进行暴力的列举计算没一个节点得到的分数最后进行计算
 //            clearPoint.clear();
 //            int clickP[] = new int[]{temPointsList.get(temPointsList.size()-1).i,temPointsList.get(temPointsList.size()-1).j};
@@ -181,6 +180,17 @@ public class Decision {
         }
     }
 
+    private void sysOut(int[][] data) {
+        System.out.println("   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 ");
+        System.out.println();
+        for (int i = 0; i < 16; i++) {
+            System.out.print("" + (i % 10) + " ");
+            for (int j = 0; j < 25; j++) {
+                System.out.print(" " + data[i][j]);
+            }
+            System.out.println();
+        }
+    }
     private int[][] copyData(int[][] data) {
         int copyData[][] = new int[16][25];
         for (int i = 0; i < 16; i++) {
