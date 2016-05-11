@@ -13,4 +13,8 @@ public class TemPoint {
         this.j = j;
         this.score = score;
     }
+
+    public TemPoint copy(){
+        return new TemPoint(i,j,score);
+    }
 }

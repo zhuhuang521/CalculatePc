@@ -15,7 +15,7 @@ public class MyThread extends Thread{
     @Override
     public void run() {
         super.run();
-        for(int i=0;i<99;i++){
+        for(int i=0;i<1;i++){
             System.out.println("计算数据文件  "+i);
             calculate(i);
         }

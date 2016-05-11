@@ -91,7 +91,7 @@ public class TestThread extends Thread{
         //计算得分
         int num = testdata.length;
         for(int i =0;i<num;i++){
-            sysOut();
+            //sysOut();
             score = score + getScore(testdata[i][0],testdata[i][1],false);
             System.out.println("  总分 "+score);
             clearPoint(testdata[i][0],testdata[i][1],data);

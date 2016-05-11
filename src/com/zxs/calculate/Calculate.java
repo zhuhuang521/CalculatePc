@@ -25,7 +25,6 @@ public class Calculate {
     private File outFile;
     private FileWriter fileWriter;
     private int lasX, lasY;
-    long decision = 1;
 
     public Calculate(int[][] data, int score) {
         this.data = data;
@@ -48,7 +47,6 @@ public class Calculate {
         start();
 
         System.out.println(df.format(new Date()) + "最后得分 score   " + score);
-        System.out.println("需要重复计算的步子为 "+decision);
         try {
             fileWriter.close();
         } catch (Exception e) {
@@ -66,12 +64,12 @@ public class Calculate {
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 25; j++) {
                 if (data[i][j] == 0) {
-                    int floorTime = floor;
                     int num = getScore(i, j, false);
                     ArrayList<int[]> clickPoints = new ArrayList<int[]>();
                     CTimes++;
                     //System.out.println("运算次数"+CTimes);
                     if (num > 0) {
+
                         int clickP[] = new int[]{i, j};
                         clickPoints.add(clickP);
                         int nextData[][] = clearPoint(i, j, copyData(data));
@@ -103,45 +101,85 @@ public class Calculate {
             }
         }
         if (!hasDeep && temPointsList.size() >= 2) {
-            decision = decision*temPointsList.size();
             System.out.println("需要比较不同数据 "+temPointsList.get(0).score+"  "+temPointsList.size());
             //从这里进行暴力的列举计算没一个节点得到的分数最后进行计算
-//            clearPoint.clear();
-//            int clickP[] = new int[]{temPointsList.get(temPointsList.size()-1).i,temPointsList.get(temPointsList.size()-1).j};
-//            clearPoint.add(clickP);
-//            maxScore = temPointsList.get(temPointsList.size()-1).score;
-
-            Decision decision = new Decision();
-            decision.decision(temPointsList,copyData(data));
-        }
-        temPointsList.clear();
-        if (maxScore != 0 || hasNexPoint(clearPoint)) {
-            int thisDoubleScore = 0;
-            int thisCalculateScore = 0;
-            int clearNum = clearPoint.size();
-            for (int i = 0; i < clearNum; i++) {
-                int finalNum = getScore(clearPoint.get(i)[0], clearPoint.get(i)[1], true);
-                //System.out.println("第 "+calculateTimes+"  运算 点击 "+clearPoint.get(i)[0]+","+clearPoint.get(i)[1]+"  得分"+(finalNum+thisDoubleScore));
-                thisCalculateScore = finalNum + thisDoubleScore + thisCalculateScore;
-                calculateTimes++;
-                data = clearPoint(clearPoint.get(i)[0], clearPoint.get(i)[1], data);
-                if (thisDoubleScore == 0) {
-                    thisDoubleScore = 2;
-                } else {
-                    thisDoubleScore++;
+            //方法2,计算从这个开始到下一个有深度点的位置运算出来的最大数据,这样可以减少运算量,先这样决定,不行在进行暴力破解,当前tem点是没有深度树的点
+            int size = temPointsList.size();
+            int maxDecisionScore =0;
+            ArrayList<DecisionPoints> decisionPointsesList = new ArrayList<DecisionPoints>();
+            for(int i = 0;i<size;i++){
+                getScore(temPointsList.get(i).i, temPointsList.get(i).j, false);
+                if(temPointsList.get(i).i ==0 && temPointsList.get(i).j == 14){
+                    System.out.println("特殊点"+calculateTimes);
                 }
-                try {
-                    fileWriter.write(clearPoint.get(i)[1] + "," + clearPoint.get(i)[0] + "\r\n");
-                } catch (Exception e) {
-
-                }
+                DecisionPoints decisionPoints = new DecisionPoints();
+                decisionPoints.addPoint(temPointsList.get(i));
+                Decision decision = new Decision(temPointsList.get(i).score,clearPoint(temPointsList.get(i).i, temPointsList.get(i).j, copyData(data)),decisionPoints);
+                decisionPointsesList.addAll(decision.startDecision());
+                System.out.println("一共计算计策数据为 "+decisionPointsesList.size());
+                //sysOut();
             }
 
-            //System.out.println("两次数据结果是  "+maxScore+"   "+thisCalculateScore+"  "+(thisCalculateScore == maxScore?" 结果相同 ":"  不一样"));
-            //System.out.println("运算补数  "+clearNum +"   得分 "+maxScore);
-            score = score + maxScore;
-            start();
+            int decisionNum = decisionPointsesList.size();
+
+            //得到最大的数据
+            int position = 0;
+            boolean deep = false;
+            int step = 0;
+            for(int d = 0; d<decisionNum;d++){
+                if(decisionPointsesList.get(d).maxScore >= maxDecisionScore){
+                    if(deep && decisionPointsesList.get(d).maxScore == maxDecisionScore && !decisionPointsesList.get(d).hasDeep){
+                        continue;
+                    }
+                    if(decisionPointsesList.get(d).maxScore == maxDecisionScore && decisionPointsesList.get(d).step > step){
+                        continue;
+                    }
+                    position = d;
+                    deep = decisionPointsesList.get(d).hasDeep;
+                    step = decisionPointsesList.get(d).step;
+                }
+            }
+            //设置参数点
+            maxScore = decisionPointsesList.get(position).maxScore;
+            clearPoint.clear();
+            System.out.println("决策点  个数 "+decisionPointsesList.get(position).decisionList.size()+"  得分" +decisionPointsesList.get(position).maxScore );
+            for(int c = 0;c<decisionPointsesList.get(position).decisionList.size();c++){
+                TemPoint temPoint = decisionPointsesList.get(position).decisionList.get(c);
+                int cp[] = new int[] {temPoint.i,temPoint.j};
+                clearPoint.add(cp);
+
+                System.out.print(temPoint.i+","+temPoint.j+"  ");
+            }
+            System.out.println();
+
         }
+        {
+            if (maxScore != 0 || hasNexPoint(clearPoint)) {
+                int thisDoubleScore = 0;
+                int thisCalculateScore = 0;
+                int clearNum = clearPoint.size();
+                for (int i = 0; i < clearNum; i++) {
+                    int finalNum = getScore(clearPoint.get(i)[0], clearPoint.get(i)[1], true);
+                    //System.out.println("第 "+calculateTimes+"  运算 点击 "+clearPoint.get(i)[0]+","+clearPoint.get(i)[1]+"  得分"+(finalNum+thisDoubleScore));
+                    thisCalculateScore = finalNum + thisDoubleScore + thisCalculateScore;
+                    calculateTimes++;
+                    data = clearPoint(clearPoint.get(i)[0], clearPoint.get(i)[1], data);
+                    if (thisDoubleScore == 0) {
+                        thisDoubleScore = 2;
+                    } else {
+                        thisDoubleScore++;
+                    }
+                    try {
+                        fileWriter.write(clearPoint.get(i)[1] + "," + clearPoint.get(i)[0] + "\r\n");
+                    } catch (Exception e) {
+
+                    }
+                }
+                score = score + maxScore;
+                start();
+            }
+        }
+
 
     }
 
