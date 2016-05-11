@@ -25,6 +25,7 @@ public class Calculate {
     private File outFile;
     private FileWriter fileWriter;
     private int lasX, lasY;
+    long decision = 1;
 
     public Calculate(int[][] data, int score) {
         this.data = data;
@@ -47,6 +48,7 @@ public class Calculate {
         start();
 
         System.out.println(df.format(new Date()) + "最后得分 score   " + score);
+        System.out.println("需要重复计算的步子为 "+decision);
         try {
             fileWriter.close();
         } catch (Exception e) {
@@ -101,6 +103,7 @@ public class Calculate {
             }
         }
         if (!hasDeep && temPointsList.size() >= 2) {
+            decision = decision*temPointsList.size();
             System.out.println("需要比较不同数据 "+temPointsList.get(0).score+"  "+temPointsList.size());
             //从这里进行暴力的列举计算没一个节点得到的分数最后进行计算
 //            clearPoint.clear();
