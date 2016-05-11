@@ -33,6 +33,17 @@ public class CalculateNextStep {
         beginClickPointsNum = clickPoints.size();
     }
 
+    private void sysOut(){
+        System.out.println("   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 ");
+        System.out.println();
+        for(int i=0;i<16;i++){
+            System.out.print(""+(i%10)+" ");
+            for(int j=0;j<25;j++){
+                System.out.print(" "+data[i][j]);
+            }
+            System.out.println();
+        }
+    }
     /**
      * 返回从当前层数往下到最后一层中计算的最大分数
      */
@@ -43,8 +54,8 @@ public class CalculateNextStep {
 
         int stepScore = getScore(lastPoint[0], lastPoint[1]);
         int num = stepScore+score+doubleScore;
-        System.out.println("第 "+Calculate.calculateTimes+"  运算 得分"+(stepScore+doubleScore));
-        Calculate.calculateTimes++;
+//        System.out.println("第 "+Calculate.calculateTimes+"  运算 得分"+(stepScore+doubleScore));
+//        Calculate.calculateTimes++;
         clickPoints.add(lastPoint);
         int[][] enableData = copyData(data);
         int nextData[][] = clearPoint(lastPoint[0], lastPoint[1], copyData(data));
@@ -232,9 +243,9 @@ public class CalculateNextStep {
                 }
             }
         }
-        if (num > 0 && lastPoint[1] == y && lastPoint[0] == x && doubleScore > 0) {
-            num = num + doubleScore;
-        }
+//        if (num > 0 && lastPoint[1] == y && lastPoint[0] == x && doubleScore > 0) {
+//            num = num + doubleScore;
+//        }
         return num;
     }
 

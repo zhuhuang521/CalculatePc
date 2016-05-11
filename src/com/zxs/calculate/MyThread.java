@@ -15,9 +15,16 @@ public class MyThread extends Thread{
     @Override
     public void run() {
         super.run();
-        //String path = Environment.getExternalStorageDirectory().getPath();
-        String path = "";
-        File file = new File("data/locs.txt");
+        for(int i=0;i<9;i++){
+            System.out.println("计算数据文件  "+i);
+            calculate(i);
+        }
+
+    }
+
+    private void calculate(int fileName){
+        data = "";
+        File file = new File("data/data/key_"+fileName+".txt");
         ArrayList<String> dataList = new ArrayList<String>();
         try{
             String line = "";

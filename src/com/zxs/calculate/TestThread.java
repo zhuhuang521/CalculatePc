@@ -85,13 +85,13 @@ public class TestThread extends Thread{
         for(int i =0;i<testList.size();i++){
             String[] datas = testList.get(i).replace(" ","").split(",");
             for(int j =0;j<2;j++){
-                testdata[i][j] = Integer.parseInt(datas[(j)%2]+"");
+                testdata[i][j] = Integer.parseInt(datas[(j+1)%2]+"");
             }
         }
         //计算得分
         int num = testdata.length;
         for(int i =0;i<num;i++){
-            //sysOut();
+            sysOut();
             score = score + getScore(testdata[i][0],testdata[i][1],false);
             System.out.println("  总分 "+score);
             clearPoint(testdata[i][0],testdata[i][1],data);
