@@ -20,7 +20,7 @@ public class TestThread extends Thread{
 
     int score = 0;
     public int step = 0;
-    boolean show = false;
+    boolean show = true;
     @Override
     public void run() {
         super.run();
@@ -91,8 +91,12 @@ public class TestThread extends Thread{
         //计算得分
         int num = testdata.length;
         for(int i =0;i<num;i++){
-            //sysOut();
-            score = score + getScore(testdata[i][0],testdata[i][1],false);
+            sysOut();
+            int setp = getScore(testdata[i][0],testdata[i][1],false);
+            if(setp ==0){
+                System.out.println("存在异常点");
+            }
+            score = score + setp;
             System.out.println("  总分 "+score);
             clearPoint(testdata[i][0],testdata[i][1],data);
             lastPointX = testdata[i][0];
@@ -198,7 +202,10 @@ public class TestThread extends Thread{
             doubleScore = 0;
         }
         step++;
-        System.out.println("第"+step+"步得分 "+""+num+"   点击 "+y+","+x+"  消除颜色"+selectedData.toString());
+        if(show){
+            System.out.println("第"+step+"步得分 "+""+num+"   点击 "+y+","+x+"  消除颜色"+selectedData.toString());
+        }
+
 
         return num;
     }

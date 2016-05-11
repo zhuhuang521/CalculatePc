@@ -109,9 +109,7 @@ public class Calculate {
             ArrayList<DecisionPoints> decisionPointsesList = new ArrayList<DecisionPoints>();
             for(int i = 0;i<size;i++){
                 getScore(temPointsList.get(i).i, temPointsList.get(i).j, false);
-                if(temPointsList.get(i).i ==0 && temPointsList.get(i).j == 14){
-                    System.out.println("特殊点"+calculateTimes);
-                }
+
                 DecisionPoints decisionPoints = new DecisionPoints();
                 decisionPoints.addPoint(temPointsList.get(i));
                 Decision decision = new Decision(temPointsList.get(i).score,clearPoint(temPointsList.get(i).i, temPointsList.get(i).j, copyData(data)),decisionPoints);

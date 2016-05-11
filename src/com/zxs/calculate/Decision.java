@@ -31,7 +31,7 @@ public class Decision {
      * 当前得分,点击链路
      * */
     public Decision(int score,int[][] data,DecisionPoints decisionPoints){
-        this.data = data;
+        this.data = copyData(data);
         this.score = score;
         selectedData = new ArrayList<Integer>();
         decisionPointsesList = new ArrayList<DecisionPoints>();
@@ -49,6 +49,9 @@ public class Decision {
             for(int j=0;j<25;j++){
                 //decisionTime++;
                 //System.out.println("deep times "+decisionTime);
+                if(data[i][j] == 0){
+                    continue;
+                }
                 int num = getScore(i,j,copyData(data));
                 if(num > 0){
                     DecisionPoints temDecision = decisionPoints1.copy();
